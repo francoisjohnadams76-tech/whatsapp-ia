@@ -9,14 +9,14 @@ AI_KEY = os.environ["ANTHROPIC_API_KEY"]
 
 def ask_ai(text):
     r = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={"x-api-key": AI_KEY,
-                 "anthropic-version": "2023-06-01"},
-        json={"model": "claude-sonnet-5-5",
-              "max_tokens": 500,
-              "messages": [{"role": "user", "content": text}]},
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
+        headers={"x-goog-api-key": AI_KEY},
+        json={"contents": [{"parts": [{"text": text}]}]},
         timeout=30)
-    return r.json()["content"][0]["text"]
+    try:
+        return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+    except (KeyError, IndexError):
+        return "Mwen pa ka reponn kounye a, eseye ankò."
 
 def send(to, text):
     requests.post(
